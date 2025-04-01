@@ -6,7 +6,10 @@ using System.Threading.Tasks;
 
 namespace library
 {
-    internal class CADProduct
+    public class CADProduct ///Mirar a ver cambiar a public
     {
+        private string constring;
+
+        
     }
 }

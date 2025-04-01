@@ -6,7 +6,8 @@ using System.Threading.Tasks;
 
 namespace library
 {
-    internal class CADCategory
+    public class CADCategory
     {
+
     }
 }
