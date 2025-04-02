@@ -13,12 +13,12 @@
              Amount &nbsp;<asp:TextBox ID="text_Amount" runat="server" Height="20px" style="margin-top: 5px; margin-left: 25px;" Width="200px"></asp:TextBox>
         </p>
          <p>
-             Category &nbsp; <asp:DropDownList ID="DropDownList" runat="server" Height="25px" Width="210px" Style="margin-top: 5px; margin-left: 25px;" OnSelectedIndexChanged="ddlCategory_SelectedIndexChanged">
-                <asp:ListItem Text="Computing" Value="Computing"></asp:ListItem>
-                <asp:ListItem Text="Telephony" Value="Telephony"></asp:ListItem>
-                <asp:ListItem Text="Gaming" Value="Gaming"></asp:ListItem>
-                <asp:ListItem Text="Home Appliances" Value="HomeAppliances"></asp:ListItem>
-                </asp:DropDownList>
+            Category &nbsp;
+            <asp:DropDownList ID="DropDownList" runat="server" Height="25px" Width="210px"
+            Style="margin-top: 5px; margin-left: 25px;" AppendDataBoundItems="true"
+            AutoPostBack="true" OnSelectedIndexChanged="DropDownListSelectedIndexChanged">
+            <asp:ListItem Text="-- Select a Category --" Value="" Selected="True"></asp:ListItem>
+            </asp:DropDownList>
         </p>
          <p>
             Price &nbsp;<asp:TextBox ID="text_Price" runat="server" Height="20px" style="margin-top: 5px; margin-left: 25px;" Width="200px"></asp:TextBox>

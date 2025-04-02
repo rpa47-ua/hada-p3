@@ -15,28 +15,33 @@ namespace library
         public bool Read(ENCategory en)
         {
             bool checkRead = false;
+            SqlConnection connection = null;
+            SqlDataReader busqueda = null;
             try
             {
-                SqlConnection connection = null;
                 connection = new SqlConnection(constring);
                 connection.Open();
 
-                string query = "SELECT name FROM [dbo].[Categories] WHERE id = " + en.id;
+                string query = "SELECT name FROM [dbo].[Categories] WHERE id = @id";
                 SqlCommand consulta = new SqlCommand(query, connection);
-                SqlDataReader busqueda = consulta.ExecuteReader();
+                consulta.Parameters.AddWithValue("@id", en.Id);
+                busqueda = consulta.ExecuteReader();
 
                 if (busqueda.Read())
                 {
-                    en.name = busqueda["name"].ToString();
+                    en.Name = busqueda["name"].ToString();
                     checkRead = true;
                 }
-
-                connection.Close();
             }
             catch (SqlException e)
             {
                 checkRead = false;
                 Console.WriteLine("Error: ", e.Message);
+            }
+            finally
+            {
+                connection.Close();
+                busqueda.Close();
             }
             return checkRead;
         }
@@ -44,27 +49,37 @@ namespace library
         public List<ENCategory> ReadAll()
         {
             List<ENCategory> categories = new List<ENCategory>();
+            SqlConnection connection = null;
+            SqlDataReader busqueda = null;
+
             try
             {
-                SqlConnection connection = null;
                 connection = new SqlConnection(constring);
                 connection.Open();
 
                 string query = "SELECT id, name FROM [dbo].[Categories]";
                 SqlCommand consulta = new SqlCommand(query, connection);
-                SqlDataReader busqueda = consulta.ExecuteReader();
+                busqueda = consulta.ExecuteReader();
 
                 while (busqueda.Read())
                 {
-                    categories.Add(new ENCategory(busqueda["id"], busqueda["name"].ToString()));
-                }
+                    ENCategory category = new ENCategory();
+                    category.Id = Convert.ToInt32(busqueda["id"]);
+                    category.Name = busqueda["name"].ToString();
+                    categories.Add(category);
 
-                connection.Close();
+                }
             }
             catch (SqlException e)
             {
                 Console.WriteLine("Error: ", e.Message);
             }
+            finally
+            {
+                connection.Close();
+                busqueda.Close();
+            }
+            
             return categories;
         }
     }

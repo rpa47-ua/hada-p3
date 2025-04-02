@@ -57,3 +57,5 @@ C:\Users\ramon\source\repos\hada-p3\proWeb\obj\Debug\proWeb.csproj.CoreCompileIn
 C:\Users\ramon\source\repos\hada-p3\proWeb\obj\Debug\proWeb.csproj.Up2Date
 C:\Users\ramon\source\repos\hada-p3\proWeb\obj\Debug\proWeb.dll
 C:\Users\ramon\source\repos\hada-p3\proWeb\obj\Debug\proWeb.pdb
+C:\Users\ramon\source\repos\hada-p3\proWeb\bin\library.dll
+C:\Users\ramon\source\repos\hada-p3\proWeb\bin\library.pdb

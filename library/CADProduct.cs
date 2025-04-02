@@ -49,7 +49,7 @@ namespace library
                 checkCreate = true;
                 Console.WriteLine("Producto creado con éxito");
             }
-            catch (SqlException e) //Mirar tema del outputMssge label en Default.aspx
+            catch (SqlException e)
             {
                 checkCreate = false;
                 Console.WriteLine("Error: " + e.Message);
