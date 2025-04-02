@@ -119,6 +119,42 @@ namespace library
                 return false;
             }
         }
+        public bool ReadFirst()
+        {
+            try
+            {
+                CADProduct product = new CADProduct();
+                return product.ReadFirst(this);
+            }
+            catch
+            {
+                return false;
+            }
+        }
+        public bool ReadNext()
+        {
+            try
+            {
+                CADProduct product = new CADProduct();
+                return product.ReadNext(this);
+            }
+            catch
+            {
+                return false;
+            }
+        }
+        public bool ReadPrev()
+        {
+            try
+            {
+                CADProduct product = new CADProduct();
+                return product.ReadPrev(this);
+            }
+            catch
+            {
+                return false;
+            }
+        }
     }
  }
 
