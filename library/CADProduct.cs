@@ -7,6 +7,7 @@ using System.Configuration;
 using System.Data;
 using System.Data.SqlClient;
 using System.Diagnostics.Eventing.Reader;
+using System.Diagnostics;
 
 namespace library
 {
@@ -23,6 +24,7 @@ namespace library
         {
             bool checkCreate = false;
             SqlConnection connection = null;
+
             try
             {
                 connection = new SqlConnection(constring);
@@ -31,6 +33,13 @@ namespace library
                 string query = "INSERT INTO [dbo].[Products] (code, name, amount, price, category, creationDate) VALUES (@code, @name, @amount, @price, @category, @creationDate)";
                 SqlCommand consulta = new SqlCommand(query, connection);
                 consulta.Parameters.AddWithValue("@code", en.Code);
+                int alredyExists = (int) consulta.ExecuteScalar();
+
+                if (alredyExists > 0)
+                {
+                    throw new Exception("Ya existe un producto con este código.");
+                }
+
                 consulta.Parameters.AddWithValue("@name", en.Name);
                 consulta.Parameters.AddWithValue("@amount", en.Amount);
                 consulta.Parameters.AddWithValue("@price", en.Price);
@@ -38,12 +47,17 @@ namespace library
                 consulta.Parameters.AddWithValue("@creationDate", en.CreationDate);
                 consulta.ExecuteNonQuery();
                 checkCreate = true;
+                Console.WriteLine("Producto creado con éxito");
             }
-            catch (SqlException e)
+            catch (SqlException e) //Mirar tema del outputMssge label en Default.aspx
             {
                 checkCreate = false;
-                Console.WriteLine("Error: ", e.Message);
-            } //Mirar Exception e
+                Console.WriteLine("Error: " + e.Message);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("Error: " + e.Message);
+            }
             finally
             {
                 connection.Close();
@@ -61,24 +75,35 @@ namespace library
                 connection = new SqlConnection(constring);
                 connection.Open();
 
-                //Mirar a ver query con valores que no son strings, ToString() ??
-                string query = "UPDATE [dbo].[Products] SET code = @code, name = @name, amount = @amount, price = @price, category = @category, creationDate = @creationDate WHERE id = @id";
+                string query = "UPDATE [dbo].[Products] SET code = @code, name = @name, amount = @amount, price = @price, category = @category, creationDate = @creationDate WHERE code = @code";
                 SqlCommand consulta = new SqlCommand(query, connection);
                 consulta.Parameters.AddWithValue("@code", en.Code);
+                int doesNotExist = (int) consulta.ExecuteScalar();
+
+                if (doesNotExist == 0)
+                {
+                    throw new Exception("No existe un producto con ese código");
+                }
+
                 consulta.Parameters.AddWithValue("@name", en.Name);
                 consulta.Parameters.AddWithValue("@amount", en.Amount);
                 consulta.Parameters.AddWithValue("@price", en.Price);
                 consulta.Parameters.AddWithValue("@category", en.Category);
                 consulta.Parameters.AddWithValue("@creationDate", en.CreationDate);
-                consulta.Parameters.AddWithValue("@id", en.Id);
                 consulta.ExecuteNonQuery();
                 checkUpdate = true;
+                Console.WriteLine("Producto actualizado con éxito");
             }
             catch (SqlException e)
             {
                 checkUpdate = false;
-                Console.WriteLine("Error: ", e.Message);
-            } //Mirar Exception e
+                Console.WriteLine("Error: " + e.Message);
+            }
+            catch (Exception e)
+            {
+                checkUpdate = false;
+                Console.WriteLine("Erro: " + e.Message);
+            }
             finally
             {
                 connection.Close();
@@ -97,16 +122,28 @@ namespace library
                 connection = new SqlConnection(constring);
                 connection.Open();
 
-                string query = "DELETE FROM [dbo].[Products] WHERE id = @id";
+                string query = "DELETE FROM [dbo].[Products] WHERE code = @code";
                 SqlCommand consulta = new SqlCommand(query, connection);
-                consulta.Parameters.AddWithValue("@id", en.Id);
+                consulta.Parameters.AddWithValue("@code", en.Code);
+                int doesExist = (int) consulta.ExecuteScalar();
+
+                if (doesExist == 0)
+                {
+                    throw new Exception("No existe un producto con ese código");
+                }
+
                 consulta.ExecuteNonQuery();
                 checkDelete = true;
             }
             catch (SqlException e) {
                 checkDelete = false;
                 Console.WriteLine("Error: ", e.Message);
-            } //Mirar Exception e
+            }
+            catch (Exception e)
+            {
+                checkDelete = false;
+                Console.WriteLine("Error: ", e.Message);
+            }
             finally
             {
                 connection.Close();
@@ -125,9 +162,9 @@ namespace library
                 connection = new SqlConnection(constring);
                 connection.Open();
 
-                string query = "SELECT * FROM [dbo].[Products] WHERE id = @id";
+                string query = "SELECT * FROM [dbo].[Products] WHERE code = @code";
                 SqlCommand consulta = new SqlCommand(query, connection);
-                consulta.Parameters.AddWithValue("@id", en.Id);
+                consulta.Parameters.AddWithValue("@code", en.Code);
                 busqueda = consulta.ExecuteReader();
 
 
@@ -168,7 +205,7 @@ namespace library
 
                 string query = "SELECT TOP 1 * FROM [dbo].[Products] ORDER BY id";
                 SqlCommand consulta = new SqlCommand(query, connection);
-                consulta.Parameters.AddWithValue("@id", en.Id);
+                consulta.Parameters.AddWithValue("@code", en.Code); 
                 busqueda = consulta.ExecuteReader();
 
 
@@ -209,7 +246,7 @@ namespace library
 
                 string query = "SELECT TOP 1 * FROM [dbo].[Products] WHERE id > @id ORDER BY id";
                 SqlCommand consulta = new SqlCommand(query, connection);
-                consulta.Parameters.AddWithValue("@id", en.Id);
+                consulta.Parameters.AddWithValue("@code", en.Code);
                 busqueda = consulta.ExecuteReader();
 
 
@@ -250,7 +287,7 @@ namespace library
 
                 string query = "SELECT TOP 1 * FROM [dbo].[Products] WHERE id < @id ORDER BY id";
                 SqlCommand consulta = new SqlCommand(query, connection);
-                consulta.Parameters.AddWithValue("@id", en.Id);
+                consulta.Parameters.AddWithValue("@code", en.Code);
                 busqueda = consulta.ExecuteReader();
 
 
