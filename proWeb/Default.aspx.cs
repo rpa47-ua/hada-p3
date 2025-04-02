@@ -85,10 +85,33 @@ namespace proWeb
         protected void onCreate(object sender, EventArgs e)
         {
             //Poner try cath en todos los metodos
+
+            if (string.IsNullOrWhiteSpace(text_Code.Text) || string.IsNullOrWhiteSpace(text_Name.Text) || string.IsNullOrWhiteSpace(text_Amount.Text) ||string.IsNullOrWhiteSpace(text_Price.Text) || string.IsNullOrWhiteSpace(text_CreationDate.Text))
+            {
+                outputMssg.Text = "Todos los campos son obligatorios";
+                return;
+            }
+
+            if (!int.TryParse(text_Amount.Text, out int amount))
+            {
+                outputMssg.Text = "La cantidad debe ser un número entero válido";
+                return;
+            }
+
+            if (!float.TryParse(text_Price.Text, out float price))
+            {
+                outputMssg.Text = "El precio debe ser un número válido";
+                return;
+            }
+
+            if (!DateTime.TryParseExact(text_CreationDate.Text, "dd/MM/yyyy hh:mm:ss", null, System.Globalization.DateTimeStyles.None, out DateTime creationDate))
+            {
+                outputMssg.Text = "La fecha debe tener el formato dd/MM/yyyy hh:mm:ss";
+                return;
+            }
+
             string code = text_Code.Text.Trim();
             string name = text_Name.Text.Trim();
-            int amount = int.Parse(text_Amount.Text);
-            float price = float.Parse(text_Price.Text);
             int category = DropDownList.SelectedIndex;
             DateTime cretionDate;
             DateTime.TryParseExact(text_CreationDate.Text, "dd/MM/yyyy hh:mm:ss", null, System.Globalization.DateTimeStyles.None, out cretionDate);
@@ -111,10 +134,32 @@ namespace proWeb
 
         protected void onUpdate(object sender, EventArgs e)
         {
+            if (string.IsNullOrWhiteSpace(text_Code.Text) || string.IsNullOrWhiteSpace(text_Name.Text) || string.IsNullOrWhiteSpace(text_Amount.Text) || string.IsNullOrWhiteSpace(text_Price.Text) || string.IsNullOrWhiteSpace(text_CreationDate.Text))
+            {
+                outputMssg.Text = "Todos los campos son obligatorios";
+                return;
+            }
+
+            if (!int.TryParse(text_Amount.Text, out int amount))
+            {
+                outputMssg.Text = "La cantidad debe ser un número entero válido";
+                return;
+            }
+
+            if (!float.TryParse(text_Price.Text, out float price))
+            {
+                outputMssg.Text = "El precio debe ser un número válido";
+                return;
+            }
+
+            if (!DateTime.TryParseExact(text_CreationDate.Text, "dd/MM/yyyy hh:mm:ss", null, System.Globalization.DateTimeStyles.None, out DateTime creationDate))
+            {
+                outputMssg.Text = "La fecha debe tener el formato dd/MM/yyyy hh:mm:ss";
+                return;
+            }
+
             string code = text_Code.Text.Trim();
             string name = text_Name.Text.Trim();
-            int amount = int.Parse(text_Amount.Text);
-            float price = float.Parse(text_Price.Text);
             int category = DropDownList.SelectedIndex;
             DateTime cretionDate;
             DateTime.TryParseExact(text_CreationDate.Text, "dd/MM/yyyy hh:mm:ss", null, System.Globalization.DateTimeStyles.None, out cretionDate);
@@ -138,10 +183,32 @@ namespace proWeb
 
         protected void onDelete(object sender, EventArgs e)
         {
+            if (string.IsNullOrWhiteSpace(text_Code.Text) || string.IsNullOrWhiteSpace(text_Name.Text) || string.IsNullOrWhiteSpace(text_Amount.Text) || string.IsNullOrWhiteSpace(text_Price.Text) || string.IsNullOrWhiteSpace(text_CreationDate.Text))
+            {
+                outputMssg.Text = "Todos los campos son obligatorios";
+                return;
+            }
+
+            if (!int.TryParse(text_Amount.Text, out int amount))
+            {
+                outputMssg.Text = "La cantidad debe ser un número entero válido";
+                return;
+            }
+
+            if (!float.TryParse(text_Price.Text, out float price))
+            {
+                outputMssg.Text = "El precio debe ser un número válido";
+                return;
+            }
+
+            if (!DateTime.TryParseExact(text_CreationDate.Text, "dd/MM/yyyy hh:mm:ss", null, System.Globalization.DateTimeStyles.None, out DateTime creationDate))
+            {
+                outputMssg.Text = "La fecha debe tener el formato dd/MM/yyyy hh:mm:ss";
+                return;
+            }
+
             string code = text_Code.Text.Trim();
             string name = text_Name.Text.Trim();
-            int amount = int.Parse(text_Amount.Text);
-            float price = float.Parse(text_Price.Text);
             int category = DropDownList.SelectedIndex;
             DateTime cretionDate;
             DateTime.TryParseExact(text_CreationDate.Text, "dd/MM/yyyy hh:mm:ss", null, System.Globalization.DateTimeStyles.None, out cretionDate);

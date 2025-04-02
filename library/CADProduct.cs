@@ -8,6 +8,7 @@ using System.Data;
 using System.Data.SqlClient;
 using System.Diagnostics.Eventing.Reader;
 using System.Diagnostics;
+using System.Security.Cryptography;
 
 namespace library
 {
@@ -30,16 +31,22 @@ namespace library
                 connection = new SqlConnection(constring);
                 connection.Open();
 
-                string query = "INSERT INTO [dbo].[Products] (code, name, amount, price, category, creationDate) VALUES (@code, @name, @amount, @price, @category, @creationDate)";
-                SqlCommand consulta = new SqlCommand(query, connection);
-                consulta.Parameters.AddWithValue("@code", en.Code);
-                int alredyExists = (int) consulta.ExecuteScalar();
+                string insertQuery = "INSERT INTO [dbo].[Products] (code, name, amount, price, category, creationDate) VALUES (@code, @name, @amount, @price, @category, @creationDate)";
+                string checkQuery = "SELECT 1 FROM [dbo].[Products] where code = @code";
+
+                SqlCommand verificar = new SqlCommand(checkQuery, connection);
+                verificar.Parameters.AddWithValue("@code", en.Code);
+                object result = verificar.ExecuteScalar();
+                int alredyExists = (result != null && result != DBNull.Value) ? Convert.ToInt32(result) : 0;
+
 
                 if (alredyExists > 0)
                 {
                     throw new Exception("Ya existe un producto con este código.");
                 }
 
+                SqlCommand consulta = new SqlCommand(insertQuery, connection);
+                consulta.Parameters.AddWithValue("@code", en.Code);
                 consulta.Parameters.AddWithValue("@name", en.Name);
                 consulta.Parameters.AddWithValue("@amount", en.Amount);
                 consulta.Parameters.AddWithValue("@price", en.Price);
@@ -75,16 +82,22 @@ namespace library
                 connection = new SqlConnection(constring);
                 connection.Open();
 
-                string query = "UPDATE [dbo].[Products] SET code = @code, name = @name, amount = @amount, price = @price, category = @category, creationDate = @creationDate WHERE code = @code";
-                SqlCommand consulta = new SqlCommand(query, connection);
-                consulta.Parameters.AddWithValue("@code", en.Code);
-                int doesNotExist = (int) consulta.ExecuteScalar();
+                string updateQuery = "UPDATE [dbo].[Products] SET code = @code, name = @name, amount = @amount, price = @price, category = @category, creationDate = @creationDate WHERE code = @code";
+                string checkQuery = "SELECT 1 FROM [dbo].[Products] where code = @code";
+
+                SqlCommand verificar = new SqlCommand(checkQuery, connection);
+                verificar.Parameters.AddWithValue("@code", en.Code);
+                object result = verificar.ExecuteScalar();
+                int doesNotExist = (result != null && result != DBNull.Value) ? Convert.ToInt32(result) : 0;
 
                 if (doesNotExist == 0)
                 {
                     throw new Exception("No existe un producto con ese código");
                 }
 
+
+                SqlCommand consulta = new SqlCommand(updateQuery, connection);
+                consulta.Parameters.AddWithValue("@code", en.Code);
                 consulta.Parameters.AddWithValue("@name", en.Name);
                 consulta.Parameters.AddWithValue("@amount", en.Amount);
                 consulta.Parameters.AddWithValue("@price", en.Price);
@@ -122,16 +135,21 @@ namespace library
                 connection = new SqlConnection(constring);
                 connection.Open();
 
-                string query = "DELETE FROM [dbo].[Products] WHERE code = @code";
-                SqlCommand consulta = new SqlCommand(query, connection);
-                consulta.Parameters.AddWithValue("@code", en.Code);
-                int doesExist = (int) consulta.ExecuteScalar();
+                string deleteQuery = "DELETE FROM [dbo].[Products] WHERE code = @code";
+                string checkQuery = "SELECT 1 FROM [dbo].[Products] where code = @code";
 
-                if (doesExist == 0)
+                SqlCommand verificar = new SqlCommand(checkQuery, connection);
+                verificar.Parameters.AddWithValue("@code", en.Code);
+                object result = verificar.ExecuteScalar();
+                int doesNotExist = (result != null && result != DBNull.Value) ? Convert.ToInt32(result) : 0;
+
+                if (doesNotExist == 0)
                 {
                     throw new Exception("No existe un producto con ese código");
                 }
 
+                SqlCommand consulta = new SqlCommand(deleteQuery, connection);
+                consulta.Parameters.AddWithValue("@code", en.Code);
                 consulta.ExecuteNonQuery();
                 checkDelete = true;
             }
@@ -309,7 +327,7 @@ namespace library
             }
             finally
             {
-                busqueda.Close();
+                //busqueda.Close();
                 connection.Close();
             }
 
