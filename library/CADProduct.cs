@@ -22,26 +22,32 @@ namespace library
         public bool Create(ENProduct en)
         {
             bool checkCreate = false;
+            SqlConnection connection = null;
             try
             {
-                SqlConnection connection = null;
                 connection = new SqlConnection(constring);
                 connection.Open();
 
-                //Mirar a ver query con valores que no son strings, ToString() ??
-                string query = "INSERT [dbo].[Products] (code, name, amount, price, category, creationDate) " +
-                    "VALUES ('" + en.code + "', '" + en.name + "', " + en.amount + ", " + en.price + ", " + en.category + ", " + en.creationDate + ")";
+                string query = "INSERT INTO [dbo].[Products] (code, name, amount, price, category, creationDate) VALUES (@code, @name, @amount, @price, @category, @creationDate)";
                 SqlCommand consulta = new SqlCommand(query, connection);
+                consulta.Parameters.AddWithValue("@code", en.Code);
+                consulta.Parameters.AddWithValue("@name", en.Name);
+                consulta.Parameters.AddWithValue("@amount", en.Amount);
+                consulta.Parameters.AddWithValue("@price", en.Price);
+                consulta.Parameters.AddWithValue("@category", en.Category);
+                consulta.Parameters.AddWithValue("@creationDate", en.CreationDate);
                 consulta.ExecuteNonQuery();
                 checkCreate = true;
-                connection.Close();
             }
-            catch(SqlException e)
+            catch (SqlException e)
             {
                 checkCreate = false;
                 Console.WriteLine("Error: ", e.Message);
+            } //Mirar Exception e
+            finally
+            {
+                connection.Close();
             }
-            //Mirar Exception e
 
             return checkCreate;
         }
@@ -49,26 +55,34 @@ namespace library
         public bool Update(ENProduct en)
         {
             bool checkUpdate = false;
+            SqlConnection connection = null;
             try
             {
-                SqlConnection connection = null;
                 connection = new SqlConnection(constring);
                 connection.Open();
 
                 //Mirar a ver query con valores que no son strings, ToString() ??
-                string query = "UPDATE [dbo].[Products] " +
-                       "SET code = '" + en.code + "' , name = '" en.name + "' , amount = " en.amount + ", price = " en.price + ", category = " en.category + ", creationDate = " en.creationDate + "WHERE id = " + en.id +"";
+                string query = "UPDATE [dbo].[Products] SET code = @code, name = @name, amount = @amount, price = @price, category = @category, creationDate = @creationDate WHERE id = @id";
                 SqlCommand consulta = new SqlCommand(query, connection);
+                consulta.Parameters.AddWithValue("@code", en.Code);
+                consulta.Parameters.AddWithValue("@name", en.Name);
+                consulta.Parameters.AddWithValue("@amount", en.Amount);
+                consulta.Parameters.AddWithValue("@price", en.Price);
+                consulta.Parameters.AddWithValue("@category", en.Category);
+                consulta.Parameters.AddWithValue("@creationDate", en.CreationDate);
+                consulta.Parameters.AddWithValue("@id", en.Id);
                 consulta.ExecuteNonQuery();
                 checkUpdate = true;
-                connection.Close();
             }
             catch (SqlException e)
             {
                 checkUpdate = false;
-                Console.WriteLine("Error: ", e.Message());
+                Console.WriteLine("Error: ", e.Message);
+            } //Mirar Exception e
+            finally
+            {
+                connection.Close();
             }
-            //Mirar Exception e
 
             return checkUpdate;
         }
@@ -76,24 +90,27 @@ namespace library
         public bool Delete(ENProduct en)
         {
             bool checkDelete = false;
+            SqlConnection connection = null;
             try
             {
-                SqlConnection connection = null;
+
                 connection = new SqlConnection(constring);
                 connection.Open();
 
-                //Mirar a ver query con valores que no son strings, ToString() ??
-                string query = "DELETE from [dbo].[Products] where id = " + en.id "";
+                string query = "DELETE FROM [dbo].[Products] WHERE id = @id";
                 SqlCommand consulta = new SqlCommand(query, connection);
+                consulta.Parameters.AddWithValue("@id", en.Id);
                 consulta.ExecuteNonQuery();
                 checkDelete = true;
-                connection.Close();
             }
             catch (SqlException e) {
                 checkDelete = false;
-                Console.WriteLine("Error: ", e.Message());
+                Console.WriteLine("Error: ", e.Message);
+            } //Mirar Exception e
+            finally
+            {
+                connection.Close();
             }
-            //Mirar Exception e
 
             return checkDelete;
         }
@@ -101,37 +118,39 @@ namespace library
         public bool Read(ENProduct en)
         {
             bool checkRead = true;
-
+            SqlConnection connection = null;
+            SqlDataReader busqueda = null;
             try
             {
-                SqlConnection connection = null;
                 connection = new SqlConnection(constring);
                 connection.Open();
 
-                //Mirar a ver query con valores que no son strings, ToString() ??
-                string query = "SELECT * FROM [dbo].[Products] WHERE id =" + en.id;
+                string query = "SELECT * FROM [dbo].[Products] WHERE id = @id";
                 SqlCommand consulta = new SqlCommand(query, connection);
-                SqlDataReader busqueda = consulta.ExecuteReader();
-                busqueda.Read();
+                consulta.Parameters.AddWithValue("@id", en.Id);
+                busqueda = consulta.ExecuteReader();
 
-                if (busqueda["id"].ToString() == en.id)
+
+                if (busqueda.Read())
                 {
-                    en.code = busqueda["code"]; //Son varchar hace falta, ToString();
-                    en.name = busqueda["name"]; //Son varchar hace falta, ToString();
-                    en.amount = busqueda["amount"].ToString();
-                    en.price = busqueda["price"].ToString();
-                    en.category = busqueda["category"].ToString();
-                    en.creationDate = busqueda["creationDate"].ToString();
+                    en.Code = busqueda["code"].ToString();
+                    en.Name = busqueda["name"].ToString();
+                    en.Amount = Convert.ToInt32(busqueda["amount"]);
+                    en.Price = Convert.ToSingle(busqueda["price"]);
+                    en.Category = Convert.ToInt32(busqueda["category"]);
+                    en.CreationDate = Convert.ToDateTime(busqueda["creationDate"]);
                 }
                 else checkRead = false;
-
-                busqueda.Close();  
-                connection.Close();
             }
             catch (SqlException e)
             {
                 checkRead = false;
-                Console.WriteLine("Error: ", e.Message);  
+                Console.WriteLine("Error: ", e.Message);
+            }
+            finally
+            {
+                busqueda.Close();
+                connection.Close();
             }
 
             return checkRead;
@@ -140,33 +159,39 @@ namespace library
         public bool ReadFirst(ENProduct en)
         {
             bool checkReadFirst = true;
-
+            SqlConnection connection = null;
+            SqlDataReader busqueda = null;
             try
             {
-                SqlConnection connection = null;
                 connection = new SqlConnection(constring);
                 connection.Open();
 
-                //Mirar a ver query con valores que no son strings, ToString() ??
-                string query = "SELECT * FROM [dbo].[Products]";
+                string query = "SELECT TOP 1 * FROM [dbo].[Products] ORDER BY id";
                 SqlCommand consulta = new SqlCommand(query, connection);
-                SqlDataReader busqueda = consulta.ExecuteReader();
-                busqueda.Read();
+                consulta.Parameters.AddWithValue("@id", en.Id);
+                busqueda = consulta.ExecuteReader();
 
-                en.code = busqueda["code"]; //Son varchar hace falta, ToString();
-                en.name = busqueda["name"]; //Son varchar hace falta, ToString();
-                en.amount = busqueda["amount"].ToString();
-                en.price = busqueda["price"].ToString();
-                en.category = busqueda["category"].ToString();
-                en.creationDate = busqueda["creationDate"].ToString();
 
-                busqueda.Close();
-                connection.Close();
+                if (busqueda.Read())
+                {
+                    en.Code = busqueda["code"].ToString();
+                    en.Name = busqueda["name"].ToString();
+                    en.Amount = Convert.ToInt32(busqueda["amount"]);
+                    en.Price = Convert.ToSingle(busqueda["price"]);
+                    en.Category = Convert.ToInt32(busqueda["category"]);
+                    en.CreationDate = Convert.ToDateTime(busqueda["creationDate"]);
+                }
+                else checkReadFirst = false;
             }
             catch (SqlException e)
             {
                 checkReadFirst = false;
                 Console.WriteLine("Error: ", e.Message);
+            }
+            finally
+            {
+                busqueda.Close();
+                connection.Close();
             }
 
             return checkReadFirst;
@@ -175,92 +200,39 @@ namespace library
         public bool ReadNext(ENProduct en)
         {
             bool checkReadNext = true;
-            bool encontrado = false;
-
+            SqlConnection connection = null;
+            SqlDataReader busqueda = null;
             try
             {
-                SqlConnection connection = null;
                 connection = new SqlConnection(constring);
                 connection.Open();
 
-                //Mirar a ver query con valores que no son strings, ToString() ??
-                string query = "SELECT * FROM [dbo].[Products]";
+                string query = "SELECT TOP 1 * FROM [dbo].[Products] WHERE id > @id ORDER BY id";
                 SqlCommand consulta = new SqlCommand(query, connection);
-                SqlDataReader busqueda = consulta.ExecuteReader();
-                busqueda.Read();
+                consulta.Parameters.AddWithValue("@id", en.Id);
+                busqueda = consulta.ExecuteReader();
 
-                while (busqueda.Read())
+
+                if (busqueda.Read())
                 {
-                    if (encontrado)
-                    {
-                        en.code = busqueda["code"]; //Son varchar hace falta, ToString();
-                        en.name = busqueda["name"]; //Son varchar hace falta, ToString();
-                        en.amount = busqueda["amount"].ToString();
-                        en.price = busqueda["price"].ToString();
-                        en.category = busqueda["category"].ToString();
-                        en.creationDate = busqueda["creationDate"].ToString();
-                        break;
-                    }
-                    else if (en.id == busqueda["id"])
-                    {
-                        encontrado = true;
-                    }
+                    en.Code = busqueda["code"].ToString();
+                    en.Name = busqueda["name"].ToString();
+                    en.Amount = Convert.ToInt32(busqueda["amount"]);
+                    en.Price = Convert.ToSingle(busqueda["price"]);
+                    en.Category = Convert.ToInt32(busqueda["category"]);
+                    en.CreationDate = Convert.ToDateTime(busqueda["creationDate"]);
                 }
-
-                busqueda.Close();
-                connection.Close();
+                else checkReadNext = false;
             }
             catch (SqlException e)
             {
                 checkReadNext = false;
                 Console.WriteLine("Error: ", e.Message);
             }
-
-            return checkReadNext;
-        }
-
-        public bool ReadNext(ENProduct en)
-        {
-            bool checkReadNext = true;
-            bool encontrado = false;
-
-            try
+            finally
             {
-                SqlConnection connection = null;
-                connection = new SqlConnection(constring);
-                connection.Open();
-
-                //Mirar a ver query con valores que no son strings, ToString() ??
-                string query = "SELECT * FROM [dbo].[Products]";
-                SqlCommand consulta = new SqlCommand(query, connection);
-                SqlDataReader busqueda = consulta.ExecuteReader();
-                busqueda.Read();
-
-                while (busqueda.Read())
-                {
-                    if (encontrado)
-                    {
-                        en.code = busqueda["code"]; //Son varchar hace falta, ToString();
-                        en.name = busqueda["name"]; //Son varchar hace falta, ToString();
-                        en.amount = busqueda["amount"].ToString();
-                        en.price = busqueda["price"].ToString();
-                        en.category = busqueda["category"].ToString();
-                        en.creationDate = busqueda["creationDate"].ToString();
-                        break;
-                    }
-                    else if (en.id == busqueda["id"])
-                    {
-                        encontrado = true;
-                    }
-                }
-
                 busqueda.Close();
                 connection.Close();
-            }
-            catch (SqlException e)
-            {
-                checkReadNext = false;
-                Console.WriteLine("Error: ", e.Message);
             }
 
             return checkReadNext;
@@ -268,62 +240,44 @@ namespace library
 
         public bool ReadPrev(ENProduct en)
         {
-            bool checkReadPrev = false;
-
+            bool checkReadPrev = true;
+            SqlConnection connection = null;
+            SqlDataReader busqueda = null;
             try
             {
-                SqlConnection connection = null;
                 connection = new SqlConnection(constring);
                 connection.Open();
 
-                //Mirar a ver query con valores que no son strings, ToString() ??
-                string query = "SELECT * FROM [dbo].[Products]";
+                string query = "SELECT TOP 1 * FROM [dbo].[Products] WHERE id < @id ORDER BY id";
                 SqlCommand consulta = new SqlCommand(query, connection);
-                SqlDataReader busqueda = consulta.ExecuteReader();
-                busqueda.Read();
+                consulta.Parameters.AddWithValue("@id", en.Id);
+                busqueda = consulta.ExecuteReader();
 
-                ENProduct temp = new ENProduct();
-                temp.code = busqueda["code"];
-                temp.name = busqueda["name"];
-                temp.amount = busqueda["amount"].ToString();
-                temp.price = busqueda["price"].ToString();
-                temp.category = busqueda["category"].ToString();
-                temp.creationDate = busqueda["creationDate"].ToString();
 
-                while (busqueda.Read() && !checkReadPrev)
+                if (busqueda.Read())
                 {
-                    if (busqueda["id"] = en.id)
-                    {
-                        checkReadPrev = true; 
-                        break;
-                    }
-                    
-                temp.code = busqueda["code"];
-                temp.name = busqueda["name"];
-                temp.amount = busqueda["amount"].ToString();
-                temp.price = busqueda["price"].ToString();
-                temp.category = busqueda["category"].ToString();
-                temp.creationDate = busqueda["creationDate"].ToString();
-
+                    en.Code = busqueda["code"].ToString();
+                    en.Name = busqueda["name"].ToString();
+                    en.Amount = Convert.ToInt32(busqueda["amount"]);
+                    en.Price = Convert.ToSingle(busqueda["price"]);
+                    en.Category = Convert.ToInt32(busqueda["category"]);
+                    en.CreationDate = Convert.ToDateTime(busqueda["creationDate"]);
                 }
-
-                en.code = temp.code;
-                en.name = temp.name;
-                en.amount = temp.amount;
-                en.price = temp.price;
-                en.category = temp.category;
-                en.creationDate = temp.creationDate;
-
-                busqueda.Close();
-                connection.Close();
+                else checkReadPrev = false;
             }
             catch (SqlException e)
             {
                 checkReadPrev = false;
                 Console.WriteLine("Error: ", e.Message);
             }
+            finally
+            {
+                busqueda.Close();
+                connection.Close();
+            }
 
             return checkReadPrev;
         }
+
     }
 }
