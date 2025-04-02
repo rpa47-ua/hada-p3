@@ -49,6 +49,12 @@ namespace library
         }
         public ENProduct()
         {
+            Code = string.Empty;
+            Name = string.Empty;
+            Amount = 0;
+            Price = 0.0f;
+            Category = 0;
+            CreationDate = DateTime.Now;
 
         }
         public ENProduct(string code, string name, int amount, float price, int category, DateTime creationDate)
@@ -61,6 +67,60 @@ namespace library
             CreationDate = creationDate;
 
         }
+        public bool Create()
+        {
+            try
+            {
+                CADProduct product = new CADProduct();
+                return product.Create(this);
 
+            }
+            catch
+            {
+                return false;
+            }
+        }
+        public bool Update()
+        {
+            try
+            {
+                CADProduct product = new CADProduct();
+                return product.Update(this);
+            }
+            catch
+            {
+                return false;
+            }
+
+
+        }
+        public bool Delete()
+        {
+            try
+            {
+                CADProduct product = new CADProduct();
+                return product.Delete(this);
+            }
+            catch
+            {
+                return false;
+            }
+        }
+        public bool Read()
+        {
+            try
+            {
+                CADProduct product = new CADProduct();
+                return product.Read(this);
+
+            }
+            catch
+            {
+                return false;
+            }
+        }
     }
-}
+ }
+
+
+
