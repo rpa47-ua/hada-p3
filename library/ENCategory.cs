@@ -21,5 +21,36 @@ namespace library
             get { return id; }
             set { id = value; }
         }
+        public ENCategory()
+        {
+            ID = 0;
+            Name = "";
+        }
+        public ENCategory(string name, int id)
+        {
+            ID = id;
+            Name = name;
+        }
+        public bool read()
+        {
+            try
+            {
+                CADCategory product = new CADCategory();
+                return product.read(this);
+
+            }
+            catch 
+            {
+                return false;
+            }
+        }
+
+        public List<ENCategory> readAll()
+        {
+            CADCategory producto = new CADCategory();
+            return producto.readAll();
+        }
     }
 }
+    
+
