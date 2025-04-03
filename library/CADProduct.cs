@@ -155,12 +155,12 @@ namespace library
             }
             catch (SqlException e) {
                 checkDelete = false;
-                Console.WriteLine("Error: ", e.Message);
+                Console.WriteLine("Error: " + e.Message);
             }
             catch (Exception e)
             {
                 checkDelete = false;
-                Console.WriteLine("Error: ", e.Message);
+                Console.WriteLine("Error: " + e.Message);
             }
             finally
             {
