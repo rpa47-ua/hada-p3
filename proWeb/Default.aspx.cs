@@ -112,7 +112,7 @@ namespace proWeb
 
             string code = text_Code.Text.Trim();
             string name = text_Name.Text.Trim();
-            int category = DropDownList.SelectedIndex;
+            int category = DropDownList.SelectedIndex + 1;
             DateTime cretionDate;
             DateTime.TryParseExact(text_CreationDate.Text, "dd/MM/yyyy hh:mm:ss", null, System.Globalization.DateTimeStyles.None, out cretionDate);
 
@@ -160,7 +160,7 @@ namespace proWeb
 
             string code = text_Code.Text.Trim();
             string name = text_Name.Text.Trim();
-            int category = DropDownList.SelectedIndex;
+            int category = DropDownList.SelectedIndex + 1;
             DateTime cretionDate;
             DateTime.TryParseExact(text_CreationDate.Text, "dd/MM/yyyy hh:mm:ss", null, System.Globalization.DateTimeStyles.None, out cretionDate);
 
@@ -222,7 +222,7 @@ namespace proWeb
             {
                 text_Name.Text = product.Name;
                 text_Amount.Text = product.Amount.ToString();
-                DropDownList.SelectedIndex = product.Category;
+                DropDownList.SelectedIndex = product.Category - 1;
                 text_Price.Text = product.Price.ToString();
                 text_CreationDate.Text = product.CreationDate.ToString();
                 outputMssg.Text = "Producto encontrado";
@@ -243,7 +243,7 @@ namespace proWeb
                 text_Code.Text = product.Code;
                 text_Name.Text = product.Name;
                 text_Amount.Text = product.Amount.ToString();
-                DropDownList.SelectedIndex = product.Category;
+                DropDownList.SelectedIndex = product.Category - 1;
                 text_Price.Text = product.Price.ToString();
                 text_CreationDate.Text = product.CreationDate.ToString("dd/MM/yyyy hh:mm:ss");
                 outputMssg.Text = "Primer producto encontrado";
@@ -274,7 +274,7 @@ namespace proWeb
                 text_Code.Text = product.Code;
                 text_Name.Text = product.Name;
                 text_Amount.Text = product.Amount.ToString();
-                DropDownList.SelectedIndex = product.Category;
+                DropDownList.SelectedIndex = product.Category - 1;
                 text_Price.Text = product.Price.ToString();
                 text_CreationDate.Text = product.CreationDate.ToString("dd/MM/yyyy hh:mm:ss");
                 outputMssg.Text = "Producto anterior encontrado";
@@ -298,14 +298,14 @@ namespace proWeb
             ENProduct product = new ENProduct();
             CADProduct cADProduct = new CADProduct();
             product.Code = code;
-            bool result = cADProduct.ReadPrev(product);
+            bool result = cADProduct.ReadNext(product);
 
             if (result)
             {
                 text_Code.Text = product.Code;
                 text_Name.Text = product.Name;
                 text_Amount.Text = product.Amount.ToString();
-                DropDownList.SelectedIndex = product.Category;
+                DropDownList.SelectedIndex = product.Category - 1;
                 text_Price.Text = product.Price.ToString();
                 text_CreationDate.Text = product.CreationDate.ToString("dd/MM/yyyy hh:mm:ss");
                 outputMssg.Text = "Producto siguiente encontrado";

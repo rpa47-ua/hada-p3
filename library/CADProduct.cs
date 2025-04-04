@@ -260,9 +260,9 @@ namespace library
             try
             {
                 connection = new SqlConnection(constring);
-                connection.Open();
+                connection.Open(); 
 
-                string query = "SELECT TOP 1 * FROM [dbo].[Products] WHERE id > @id ORDER BY id";
+                string query = "SELECT TOP 1 * FROM [dbo].[Products] WHERE id > (SELECT id FROM [dbo].[Products] WHERE code = @code) ORDER BY id ASC";
                 SqlCommand consulta = new SqlCommand(query, connection);
                 consulta.Parameters.AddWithValue("@code", en.Code);
                 busqueda = consulta.ExecuteReader();
@@ -286,8 +286,8 @@ namespace library
             }
             finally
             {
-                busqueda.Close();
-                connection.Close();
+                busqueda?.Close();
+                connection?.Close();
             }
 
             return checkReadNext;
@@ -303,7 +303,7 @@ namespace library
                 connection = new SqlConnection(constring);
                 connection.Open();
 
-                string query = "SELECT TOP 1 * FROM [dbo].[Products] WHERE id < @id ORDER BY id";
+                string query = "SELECT TOP 1 * FROM [dbo].[Products] WHERE id < (SELECT id FROM [dbo].[Products] WHERE code = @code) ORDER BY id ASC";
                 SqlCommand consulta = new SqlCommand(query, connection);
                 consulta.Parameters.AddWithValue("@code", en.Code);
                 busqueda = consulta.ExecuteReader();
@@ -327,8 +327,8 @@ namespace library
             }
             finally
             {
-                //busqueda.Close();
-                connection.Close();
+                busqueda?.Close();
+        connection?.Close();
             }
 
             return checkReadPrev;
